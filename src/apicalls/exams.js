@@ -92,7 +92,7 @@ export const editQuestionById = async (payload) => {
 export const deleteQuestionById = async (payload) => {
   try {
     const response = await axiosInstance.post(
-      "https://prashn-pravah-backend-et4nozin4-adarsh-kumars-projects-004e490d.vercel.app/api/exams/delete-question-in-exam",
+      "https://prashn-pravah-backend-ewl0qomuc-adarsh-kumars-projects-004e490d.vercel.app/api/exams/delete-question-in-exam",
       payload
     );
     return response.data;
