@@ -1,5 +1,5 @@
 import { message } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { getUserInfo } from "../apicalls/users";
 import { useDispatch, useSelector } from "react-redux";
 import { SetUser } from "../redux/usersSlice.js";
@@ -79,7 +79,7 @@ function ProtectedRoute({ children }) {
     },
   ];
 
-  const getUserData = async () => {
+  const getUserData = useCallback(async () => {
     try {
       dispatch(ShowLoading());
       const response = await getUserInfo();
@@ -99,7 +99,7 @@ function ProtectedRoute({ children }) {
       dispatch(HideLoading());
       message.error(error.message);
     }
-  };
+  }, [dispatch, navigate]);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -107,7 +107,7 @@ function ProtectedRoute({ children }) {
     } else {
       navigate("/login");
     }
-  }, []);
+  }, [getUserData, navigate]);
 
   const activeRoute = window.location.pathname;
 

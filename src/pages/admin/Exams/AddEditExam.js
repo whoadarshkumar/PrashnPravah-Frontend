@@ -1,5 +1,5 @@
-import { Col, Form, message, Row, Select, Table } from "antd";
-import React, { useEffect } from "react";
+import { Col, Form, message, Row, Table } from "antd";
+import React, { useEffect, useCallback } from "react";
 import {
   addExam,
   deleteQuestionById,
@@ -49,7 +49,7 @@ function AddEditExam() {
     }
   };
 
-  const getExamData = async () => {
+  const getExamData = useCallback(async () => {
     try {
       dispatch(ShowLoading());
       const response = await getExamById({
@@ -65,13 +65,13 @@ function AddEditExam() {
       dispatch(HideLoading());
       message.error(error.message);
     }
-  };
+  }, [dispatch, params.id]);
 
   useEffect(() => {
     if (params.id) {
       getExamData();
     }
-  }, []);
+  }, [params.id, getExamData]);
 
   const deleteQuestion = async (questionId) => {
     try {

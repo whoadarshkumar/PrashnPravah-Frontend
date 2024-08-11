@@ -1,5 +1,5 @@
 import { message } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { getExamById } from "../../../apicalls/exams";
@@ -22,17 +22,15 @@ function WriteExam() {
   const [intervalId, setIntervalId] = useState(null);
   const { user } = useSelector((state) => state.users);
 
-  const getExamData = async () => {
+  const getExamData = useCallback(async () => {
     try {
       dispatch(ShowLoading());
-      const response = await getExamById({
-        examId: params.id,
-      });
+      const response = await getExamById({ examId: params.id });
       dispatch(HideLoading());
       if (response.success) {
         setQuestions(response.data.questions);
         setExamData(response.data);
-        setSecondsLeft(response.data.duration);
+        setSecondsLeft(response.data.duration * 60);
       } else {
         message.error(response.message);
       }
@@ -40,9 +38,9 @@ function WriteExam() {
       dispatch(HideLoading());
       message.error(error.message);
     }
-  };
+  }, [dispatch, params.id]);
 
-  const calculateResult = async () => {
+  const calculateResult = useCallback(async () => {
     try {
       let correctAnswers = [];
       let wrongAnswers = [];
@@ -82,7 +80,7 @@ function WriteExam() {
       dispatch(HideLoading());
       message.error(error.message);
     }
-  };
+  }, [dispatch, params.id, user._id, examData.passingMarks, questions, selectedOptions]);
 
   const startTimer = () => {
     let totalSeconds = examData.duration*60;
@@ -102,13 +100,13 @@ function WriteExam() {
       clearInterval(intervalId);
       calculateResult();
     }
-  }, [timeUp]);
+  }, [timeUp, view, intervalId, calculateResult]);
 
   useEffect(() => {
     if (params.id) {
       getExamData();
     }
-  }, []);
+  }, [getExamData, params.id]);
   return (
     examData && (
       <div className="mt-2">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback} from "react";
 import PageTitle from "../../../components/PageTitle";
 import { message, Table } from "antd";
 import { useDispatch } from "react-redux";
@@ -6,7 +6,7 @@ import { HideLoading, ShowLoading } from "../../../redux/loaderSlice";
 import { getAllReports } from "../../../apicalls/reports";
 import { useEffect } from "react";
 import moment from "moment";
-import { render } from "react-dom";
+// import { render } from "react-dom";
 
 function AdminReports() {
   const [reportsData, setReportsData] = React.useState([]);
@@ -60,7 +60,7 @@ function AdminReports() {
     },
   ];
 
-  const getData = async (tempFilters) => {
+  const getData = useCallback(async (tempFilters) => {
     try {
       dispatch(ShowLoading());
       const response = await getAllReports(tempFilters);
@@ -74,11 +74,11 @@ function AdminReports() {
       dispatch(HideLoading());
       message.error(error.message);
     }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     getData(filters);
-  }, []);
+  }, [filters, getData]);
 
   return (
     <div>

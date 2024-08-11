@@ -1,5 +1,5 @@
 import { Col, message, Row } from "antd";
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllExams } from "../../../apicalls/exams";
 import { HideLoading, ShowLoading } from "../../../redux/loaderSlice";
@@ -10,7 +10,7 @@ function Home() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.users);
-  const getExams = async () => {
+  const getExams = useCallback(async () => {
     try {
       dispatch(ShowLoading());
       const response = await getAllExams();
@@ -24,11 +24,11 @@ function Home() {
       dispatch(HideLoading());
       message.error(error.message);
     }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     getExams();
-  }, []);
+  }, [getExams]);
 
   return (
     user && (
